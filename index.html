@@ -1,117 +1,41 @@
+
  
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#126b48">
 <title>Meu Financeiro</title>
 <style>
-:root{font-family:-apple-system,BlinkMacSystemFont,sans-serif;color:#18251f;background:#f3f6f4}
-*{box-sizing:border-box}
-body{margin:0}
-header{background:#126b48;color:white;padding:26px 20px 30px;border-radius:0 0 25px 25px}
-header small{opacity:.85}
-h1{margin:6px 0 20px;font-size:27px}
-.balance{font-size:34px;font-weight:750;margin:8px 0}
-main{padding:16px;max-width:600px;margin:auto}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.card{background:white;padding:15px;border-radius:15px;box-shadow:0 2px 10px #14281a0b}
-.card small{color:#66756d}
-.card strong{display:block;margin-top:8px;font-size:19px;overflow-wrap:anywhere}
-section{background:white;padding:17px;border-radius:17px;margin-top:15px}
-h2{font-size:18px;margin:0 0 14px}
-label{display:block;font-size:13px;color:#52635a;margin:12px 0 6px}
-input,select,button{font:inherit;width:100%;padding:13px;border-radius:10px}
-input,select{border:1px solid #d8e1db;background:white;color:#18251f}
-button{border:0;background:#126b48;color:white;font-weight:650;margin-top:14px;cursor:pointer}
-button.secondary{background:#e5eee8;color:#126b48}
-.item{display:flex;justify-content:space-between;gap:12px;padding:13px 0;border-bottom:1px solid #edf0ed}
-.item:last-child{border:0}
-.item small{display:block;color:#738078;margin-top:5px}
-.amount{font-weight:700;white-space:nowrap}
-.income{color:#13824f}.expense{color:#c33c42}
-.delete{width:auto;padding:6px 10px;margin:7px 0 0;background:#fbe9e9;color:#a42b30;font-size:12px}
-.empty{color:#718077;font-size:14px;padding:8px 0}
-footer{text-align:center;color:#77857c;font-size:12px;padding:22px}
+:root{font-family:system-ui,sans-serif;color:#18352a;background:#f2f7f3}*{box-sizing:border-box}body{margin:0}
+header{background:#126b48;color:white;padding:24px 18px 28px;border-radius:0 0 24px 24px}header small{opacity:.9}h1{font-size:26px;margin:7px 0 16px}.balance-label{font-size:14px;opacity:.9}.balance{font-size:36px;font-weight:800;margin:5px 0}
+main{max-width:620px;margin:auto;padding:16px}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}button{font:inherit;border:0;border-radius:13px;padding:13px;background:#126b48;color:white;font-weight:700;cursor:pointer}button.secondary{background:#e0eee5;color:#17573c}
+.card{background:white;border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 2px 10px #173d2910}h2{font-size:18px;margin:0 0 12px}label{display:block;font-size:14px;font-weight:650;margin:10px 0 5px}input,select{width:100%;font:inherit;padding:12px;border:1px solid #cadbd0;border-radius:10px;background:white;color:#18352a}.form{display:none}.form.open{display:block}
+.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px}.metric{background:#f1f7f2;padding:12px;border-radius:12px}.metric span{font-size:12px;color:#547061;display:block}.metric strong{font-size:20px;display:block;margin-top:4px}
+.entry{display:flex;gap:10px;align-items:flex-start;padding:12px 0;border-bottom:1px solid #e6eee8}.entry:last-child{border-bottom:0}.entry-main{flex:1;min-width:0}.entry-title{font-weight:700;overflow-wrap:anywhere}.entry-meta{font-size:12px;color:#607568;margin-top:3px}.amount{font-weight:800;white-space:nowrap}.income{color:#187547}.expense{color:#b43b3b}.delete{padding:5px 9px;border-radius:8px;background:#f9e6e6;color:#a22;font-size:12px}.empty{color:#687d70;text-align:center;padding:18px 4px}.note{font-size:12px;color:#62766a;line-height:1.5}
 </style>
 </head>
 <body>
-<header>
-  <small>SEU CONTROLE FINANCEIRO</small>
-  <h1>Meu Financeiro 💚</h1>
-  <small>Saldo disponível</small>
-  <div class="balance" id="saldo">R$ 0,00</div>
-  <small id="mes"></small>
-</header>
+<header><small>MEU DINHEIRO, MEU CONTROLE</small><h1>Meu Financeiro 💚</h1><div class="balance-label">Saldo atual</div><div class="balance" id="balance">R$ 0,00</div><small id="count">Nenhuma movimentação registrada</small></header>
 <main>
-  <div class="cards">
-    <div class="card"><small>Entradas</small><strong class="income" id="entradas">R$ 0,00</strong></div>
-    <div class="card"><small>Despesas</small><strong class="expense" id="despesas">R$ 0,00</strong></div>
-  </div>
-  <section>
-    <h2>➕ Novo lançamento</h2>
-    <form id="form">
-      <label for="descricao">O que foi?</label>
-      <input id="descricao" placeholder="Ex.: salário, aluguel, capina" required maxlength="100">
-      <label for="valor">Valor em reais</label>
-      <input id="valor" type="number" inputmode="decimal" min="0.01" step="0.01" placeholder="0,00" required>
-      <label for="tipo">Tipo de lançamento</label>
-      <select id="tipo"><option value="entrada">Entrada de dinheiro</option><option value="despesa">Despesa</option></select>
-      <label for="data">Data</label>
-      <input id="data" type="date" required>
-      <button type="submit">Salvar lançamento</button>
-    </form>
-  </section>
-  <section>
-    <h2>📋 Histórico</h2>
-    <div id="historico"><p class="empty">Seus lançamentos aparecerão aqui.</p></div>
-    <button class="secondary" id="exportar" type="button">Exportar meus dados</button>
-  </section>
-  <footer>Seus lançamentos ficam salvos neste navegador. Evite apagar os dados do site sem fazer uma cópia de segurança.</footer>
+<div class="actions"><button id="showIncome">＋ Dinheiro entrou</button><button id="showExpense" class="secondary">− Anotar gasto/conta</button></div>
+<section class="card form" id="entryForm"><h2 id="formTitle">Nova movimentação</h2><form id="transactionForm"><input type="hidden" id="kind" value="expense">
+<label for="description">O que foi?</label><input id="description" maxlength="80" placeholder="Ex.: frete, aluguel, energia" required>
+<label for="amount">Qual valor? (R$)</label><input id="amount" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="0,00" required>
+<label for="date">Data</label><input id="date" type="date" required>
+<label for="account">Onde está o dinheiro?</label><select id="account"><option>Dinheiro em espécie</option><option>Pix / Santander</option><option>Outra conta</option></select>
+<div style="display:flex;gap:8px;margin-top:16px"><button type="submit" style="flex:1">Salvar</button><button type="button" class="secondary" id="cancel" style="flex:1">Cancelar</button></div></form></section>
+<section class="card"><h2>Resumo</h2><div class="summary"><div class="metric"><span>Entradas</span><strong id="incomeTotal" class="income">R$ 0,00</strong></div><div class="metric"><span>Saídas</span><strong id="expenseTotal" class="expense">R$ 0,00</strong></div></div></section>
+<section class="card"><h2>Movimentações</h2><div id="history" class="empty">Ainda não tem nada anotado. Use um dos botões acima para começar.</div><button class="secondary" id="export" style="width:100%;margin-top:12px">Baixar cópia dos registros (CSV)</button><p class="note">Os registros ficam salvos neste navegador e aparelho. Baixe uma cópia de vez em quando. Se apagar os dados do navegador ou trocar de aparelho, os registros podem sumir.</p></section>
 </main>
 <script>
-const chave="meuFinanceiroLancamentosV1";
-const dinheiro=n=>n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-const hoje=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
-document.getElementById("data").value=hoje();
-document.getElementById("mes").textContent=new Date().toLocaleDateString("pt-BR",{month:"long",year:"numeric"});
-let lancamentos=[];
-try{lancamentos=JSON.parse(localStorage.getItem(chave)||"[]");if(!Array.isArray(lancamentos))lancamentos=[]}catch(e){lancamentos=[]}
-function salvar(){try{localStorage.setItem(chave,JSON.stringify(lancamentos));return true}catch(e){alert("Não foi possível salvar. Confira o espaço disponível no navegador.");return false}}
-function render(){
- const entradas=lancamentos.filter(x=>x.tipo==="entrada").reduce((s,x)=>s+x.valor,0);
- const despesas=lancamentos.filter(x=>x.tipo==="despesa").reduce((s,x)=>s+x.valor,0);
- document.getElementById("saldo").textContent=dinheiro(entradas-despesas);
- document.getElementById("entradas").textContent=dinheiro(entradas);
- document.getElementById("despesas").textContent=dinheiro(despesas);
- const area=document.getElementById("historico");area.replaceChildren();
- if(!lancamentos.length){const p=document.createElement("p");p.className="empty";p.textContent="Seus lançamentos aparecerão aqui.";area.append(p);return}
- [...lancamentos].reverse().forEach(x=>{
-  const item=document.createElement("div");item.className="item";
-  const info=document.createElement("div");const nome=document.createElement("strong");nome.textContent=x.descricao;
-  const data=document.createElement("small");data.textContent=new Date(x.data+"T12:00:00").toLocaleDateString("pt-BR");
-  const excluir=document.createElement("button");excluir.type="button";excluir.className="delete";excluir.textContent="Excluir lançamento";excluir.onclick=()=>{if(confirm("Excluir este lançamento?")){lancamentos=lancamentos.filter(y=>y.id!==x.id);salvar();render()}};
-  info.append(nome,data,document.createElement("br"),excluir);
-  const valor=document.createElement("div");valor.className="amount "+(x.tipo==="entrada"?"income":"expense");valor.textContent=(x.tipo==="entrada"?"+ ":"− ")+dinheiro(x.valor);
-  item.append(info,valor);area.append(item)
- })
-}
-document.getElementById("form").addEventListener("submit",e=>{
- e.preventDefault();
- const descricao=document.getElementById("descricao").value.trim();
- const valor=Number(document.getElementById("valor").value);
- const data=document.getElementById("data").value;
- if(!descricao||!Number.isFinite(valor)||valor<=0||!data){alert("Confira a descrição, o valor e a data.");return}
- lancamentos.push({id:Date.now().toString()+Math.random().toString(16).slice(2),descricao,valor,tipo:document.getElementById("tipo").value,data});
- if(salvar()){render();e.target.reset();document.getElementById("data").value=hoje()}
-});
-document.getElementById("exportar").addEventListener("click",()=>{
- const blob=new Blob([JSON.stringify(lancamentos,null,2)],{type:"application/json"});
- const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="meu-financeiro-backup.json";a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)
-});
-render();
-</script>
-</body>
-</html>
-
+(()=>{const $=id=>document.getElementById(id),key='meuFinanceiroRegistrosV1';let records=[];try{records=JSON.parse(localStorage.getItem(key)||'[]');if(!Array.isArray(records))records=[]}catch(e){records=[]}
+const money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL'}),today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};$('date').value=today();
+function save(){try{localStorage.setItem(key,JSON.stringify(records))}catch(e){alert('Não consegui salvar neste navegador. Baixe uma cópia dos registros.')}}
+function render(){const ins=records.filter(r=>r.kind==='income').reduce((s,r)=>s+r.amount,0),outs=records.filter(r=>r.kind==='expense').reduce((s,r)=>s+r.amount,0);$('balance').textContent=money(ins-outs);$('incomeTotal').textContent=money(ins);$('expenseTotal').textContent=money(outs);$('count').textContent=records.length===1?'1 movimentação registrada':`${records.length} movimentações registradas`;const h=$('history');h.innerHTML='';if(!records.length){h.className='empty';h.textContent='Ainda não tem nada anotado. Use um dos botões acima para começar.';return}h.className='';[...records].sort((a,b)=>b.date.localeCompare(a.date)||b.id-a.id).forEach(r=>{const row=document.createElement('div');row.className='entry';const main=document.createElement('div');main.className='entry-main';const title=document.createElement('div');title.className='entry-title';title.textContent=r.description;const meta=document.createElement('div');meta.className='entry-meta';meta.textContent=`${r.date.split('-').reverse().join('/')} · ${r.account}`;const amount=document.createElement('div');amount.className='amount '+(r.kind==='income'?'income':'expense');amount.textContent=(r.kind==='income'?'+ ':'− ')+money(r.amount);const del=document.createElement('button');del.className='delete';del.textContent='Apagar';del.type='button';del.onclick=()=>{if(confirm('Apagar esta movimentação?')){records=records.filter(x=>x.id!==r.id);save();render()}};main.append(title,meta);row.append(main,amount,del);h.append(row)})}
+function openForm(kind){$('kind').value=kind;$('formTitle').textContent=kind==='income'?'Anotar dinheiro que entrou':'Anotar gasto ou conta paga';$('entryForm').classList.add('open');$('description').focus();$('entryForm').scrollIntoView({behavior:'smooth',block:'start'})}
+$('showIncome').onclick=()=>openForm('income');$('showExpense').onclick=()=>openForm('expense');$('cancel').onclick=()=>{$('entryForm').classList.remove('open');$('transactionForm').reset();$('date').value=today()};
+$('transactionForm').onsubmit=e=>{e.preventDefault();const description=$('description').value.trim(),amount=Number($('amount').value);if(!description||!Number.isFinite(amount)||amount<=0){alert('Confira a descrição e o valor.');return}records.push({id:Date.now(),kind:$('kind').value,description,amount,date:$('date').value||today(),account:$('account').value});save();render();$('transactionForm').reset();$('date').value=today();$('entryForm').classList.remove('open')};
+$('export').onclick=()=>{if(!records.length){alert('Ainda não há registros para baixar.');return}const rows=[['Tipo','Descricao','Valor','Data','Conta'],...records.map(r=>[r.kind==='income'?'Entrada':'Saída',r.description,r.amount.toFixed(2),r.date,r.account])],csv=rows.map(row=>row.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';')).join('\r\n'),blob=new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='meu-controle-financeiro.csv';a.click();URL.revokeObjectURL(url)};render()})();
+</script></body></html>
